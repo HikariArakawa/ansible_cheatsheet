@@ -1,0 +1,41 @@
+- hosts:
+  - localhost
+  vars_prompt:
+    - name: DestDir
+      prompt: "Please imput create dir"
+      private: false
+      confirm: false
+    - name: Role
+      prompt: "Please imput Role name"
+      private: false
+      confirm: false
+   
+  tasks:
+    - name: create Role path
+      set_fact: 
+        role_path: "{{ DestDir }}/{{ Role }}"
+    - name: check Role path
+      stat:
+        path: "{{ role_path }}"
+      register: role_check
+
+    - file: path="{{ role_path }}/{{ item }}"
+            state=directory
+            owner=hoge
+            group=staff
+            mode=0755
+      when: not role_check.stat.exists
+      with_items:
+       - ""
+       - "defaults"
+       - "files"
+       - "hadlers"
+       - "meta"
+       - "tasks"
+       - "templates"
+       - "vars"
+
+
+
+      
+      
