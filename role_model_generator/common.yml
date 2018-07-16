@@ -1,0 +1,13 @@
+- hosts:
+  - localhost
+  vars_prompt:
+    - name: DestDir
+      prompt: "Please imput create dir"
+      private: false
+      confirm: false
+    - name: Role
+      prompt: "Please imput Role name"
+      private: false
+      confirm: false
+  roles: 
+    - common

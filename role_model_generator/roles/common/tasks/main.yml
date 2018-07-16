@@ -1,0 +1,38 @@
+---
+- name: create Role path
+  set_fact: 
+    create_role_path: "{{ DestDir }}/{{ Role }}"
+- debug: msg="{{ create_role_path }}"
+- name: check Role path
+  stat:
+    path: "{{ create_role_path }}"
+  register: role_exist_check
+
+- file: path="{{ create_role_path }}/roles/{{ Role }}/{{ item }}"
+        state=directory
+        owner={{ file_owner }}
+        group={{ file_group }}
+        mode=0755
+  when: not role_exist_check.stat.exists
+  with_items:
+    - "defaults"
+    - "files"
+    - "hadlers"
+    - "meta"
+    - "tasks"
+    - "templates"
+    - "vars"
+
+- file: path={{ create_role_path }}/roles/{{ Role }}/tasks/main.yml 
+        owner={{ file_owner }}
+        group={{ file_group }}
+        state=touch 
+        mode=0755
+
+- file: path={{ create_role_path }}/{{ Role }}.yml 
+        owner={{ file_owner }}
+        group={{ file_group }}
+        state=touch 
+        mode=0755
+  
+...
