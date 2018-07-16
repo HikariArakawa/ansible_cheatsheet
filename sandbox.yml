@@ -1,0 +1,66 @@
+---
+ - hosts: 
+   - localhost
+   ## 外部ファイル読み込み
+   vars_files:
+      - ./prod_vars.yml
+   vars:
+     hello: 'Hello World'
+     ## 構造体
+     ipv4:
+       address: "192.168.24.14"
+       broadcast: "192.168.24.255"
+       network: "255.255.255.0"
+     ## 配列
+     address_list:
+      - 
+       - address: "192.168.24.14"
+       - broadcast: "192.168.24.255"
+       - network: "255.255.255.0"
+   ## パスワード入力もどき
+   ##vars_prompt:
+     ##- name: "Password"
+       ##prompt: "Please Password!"
+       ##private: true
+       ##confirm: true
+   tasks:
+     - name: Hello World
+       command: "echo {{ hello }}"
+    ## 変数の参照
+     - debug: msg="{{ hello }}"
+     - debug: msg="{{ hello[0:5] }}"
+    ## リストの参照
+     - debug: msg="{{ ipv4 }}"
+     - debug: msg="{{ address_list.0 }}"
+    ## prod_vars 変数
+     - debug: msg="{{ userinfo.user_name }}"
+    ## パスワード入力もどき
+     ##- debug: msg="{{ Password }}"
+    ## 変数代入
+     - name: Get uname
+       command: uname -r
+       register: env_local
+     - name: Debug regist value
+       debug:
+        var: env_local
+    ## 設定ファイル作成
+     ##- name: create config file
+       ##ini_file:
+         ##dest: ./hogehoge.ini
+         ##section: default
+         ##option: IPADDR
+         ##value: "{{ ipv4.address }}"
+     ## マジック変数
+     - debug: msg="{{ ansible_version }}"
+     ## テンプレート制御構文　& 　複数行のメッセージ
+     - name: for sample
+       debug:
+         msg: |
+          {% for host in groups['test_servers'] if host != 'localhost' %} 
+           hello 
+          {% endfor %}
+     ##"{% for host in groups['test_servers'] if host != 'localhost' %} hello {% endfor %}"
+     
+
+
+...
